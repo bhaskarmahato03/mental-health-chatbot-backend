@@ -1,0 +1,26 @@
+# Core Dependencies
+fastapi
+uvicorn
+python-dotenv
+pydantic
+requests
+
+# LangChain
+langchain
+langchain-core
+langchain-google-genai
+langchain-community
+
+# LlamaIndex
+llama-index
+llama-index-llms-google-genai
+llama-index-embeddings-huggingface
+
+# ML/AI
+transformers
+torch
+sentence-transformers
+huggingface-hub
+pandas
+numpy
+python-multipart
