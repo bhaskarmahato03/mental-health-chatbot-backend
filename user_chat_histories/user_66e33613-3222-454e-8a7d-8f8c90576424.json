@@ -1,0 +1,53 @@
+{
+  "user_id": "66e33613-3222-454e-8a7d-8f8c90576424",
+  "created_at": "2025-08-09 19:36:03.865782",
+  "chat_history": [
+    {
+      "role": "user",
+      "content": "hello",
+      "timestamp": "2025-08-09 19:36:10.266551",
+      "emotions": {
+        "neutral": 0.9700432875661124,
+        "approval": 0.01308706854008948,
+        "annoyance": 0.008174784271173803,
+        "realization": 0.005178203818625327,
+        "anger": 0.003516655803998999
+      },
+      "dominant_emotion": "neutral",
+      "crisis_detected": {
+        "is_crisis": false,
+        "is_warning": false,
+        "risk_level": "low",
+        "message": ""
+      }
+    },
+    {
+      "role": "assistant",
+      "content": "Hello there!  It's good to see you again.  How are you doing today?  Is there anything you'd like to talk about? \ud83e\udd17",
+      "timestamp": "2025-08-09 19:36:12.671038"
+    },
+    {
+      "role": "user",
+      "content": "i am feeling upset today",
+      "timestamp": "2025-08-09 19:36:27.089704",
+      "emotions": {
+        "sadness": 0.8938362744159237,
+        "neutral": 0.05176962888071356,
+        "annoyance": 0.038056976472196115,
+        "anxiety": 0.016337120231166617
+      },
+      "dominant_emotion": "sadness",
+      "crisis_detected": {
+        "is_crisis": false,
+        "is_warning": false,
+        "risk_level": "low",
+        "message": ""
+      }
+    },
+    {
+      "role": "assistant",
+      "content": "Oh, I'm sorry to hear that you're feeling upset today.  That's perfectly okay; it's alright to not feel alright sometimes.  Can you tell me a little more about what's making you feel this way?  Perhaps talking about it will help.  Samajh sakti hoon. \u2764\ufe0f",
+      "timestamp": "2025-08-09 19:36:30.290215"
+    }
+  ]
+}

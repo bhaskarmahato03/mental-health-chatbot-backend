@@ -1,0 +1,29 @@
+{
+  "user_id": "acdf44bb-22a7-4056-8372-933b4677c768",
+  "created_at": "2025-08-09 19:21:27.673351",
+  "chat_history": [
+    {
+      "role": "user",
+      "content": "i am feeling a bit stressed today",
+      "timestamp": "2025-08-09 19:26:09.032340",
+      "emotions": {
+        "anxiety": 0.4354925479865896,
+        "sadness": 0.36552991246976885,
+        "caring": 0.1182722236389188,
+        "neutral": 0.08070531590472271
+      },
+      "dominant_emotion": "anxiety",
+      "crisis_detected": {
+        "is_crisis": false,
+        "is_warning": false,
+        "risk_level": "low",
+        "message": ""
+      }
+    },
+    {
+      "role": "assistant",
+      "content": "Oh, honey, I'm so sorry to hear that you're feeling stressed today.  It\u2019s okay not to be okay, you know?  Sometimes even a small thing can feel overwhelming.  Tell me, what's been weighing on your mind?  Is there anything specific I can help you with? \u2764\ufe0f",
+      "timestamp": "2025-08-09 19:26:14.061843"
+    }
+  ]
+}

@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mental Health Chatbot</title>
+    <!-- Tailwind CSS for styling -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts for a cleaner look -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+    <style>
+        /* Custom styles for the chat interface */
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        /* Style for the scrollbar */
+        #chat-messages::-webkit-scrollbar {
+            width: 6px;
+        }
+        #chat-messages::-webkit-scrollbar-track {
+            background: #f1f5f9;
+        }
+        #chat-messages::-webkit-scrollbar-thumb {
+            background: #94a3b8;
+            border-radius: 3px;
+        }
+    </style>
+</head>
+<body class="bg-slate-100 flex items-center justify-center h-screen">
+
+    <div class="flex flex-col w-full max-w-2xl h-full md:h-[90vh] bg-white rounded-lg shadow-2xl">
+        <!-- Header -->
+        <header class="bg-slate-800 text-white p-4 rounded-t-lg flex items-center justify-between shadow-md">
+            <div>
+                <h1 class="text-xl font-bold">Aanya - Your Mental Health Companion</h1>
+                <p id="user-id-display" class="text-xs text-slate-400 mt-1">Connecting...</p>
+            </div>
+            <div id="status-indicator" class="w-4 h-4 bg-yellow-400 rounded-full animate-pulse"></div>
+        </header>
+
+        <!-- Chat Messages Area -->
+        <main id="chat-messages" class="flex-1 p-6 overflow-y-auto space-y-4 bg-slate-50">
+            <!-- Chat messages will be dynamically added here -->
+        </main>
+
+        <!-- Typing Indicator -->
+        <div id="typing-indicator" class="p-4 hidden">
+            <div class="flex items-center space-x-2">
+                <div class="w-2 h-2 bg-slate-500 rounded-full animate-bounce" style="animation-delay: -0.3s;"></div>
+                <div class="w-2 h-2 bg-slate-500 rounded-full animate-bounce" style="animation-delay: -0.15s;"></div>
+                <div class="w-2 h-2 bg-slate-500 rounded-full animate-bounce"></div>
+                <span class="text-sm text-slate-500">Aanya is typing...</span>
+            </div>
+        </div>
+
+        <!-- Input Area -->
+        <footer class="p-4 bg-white border-t border-slate-200 rounded-b-lg">
+            <div class="flex items-center space-x-2">
+                <input type="text" id="user-input" placeholder="Type your message here..." class="flex-1 p-3 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition">
+                <button id="send-button" class="bg-blue-600 text-white px-6 py-3 rounded-lg font-semibold hover:bg-blue-700 transition shadow-md disabled:bg-slate-400 disabled:cursor-not-allowed">
+                    Send
+                </button>
+            </div>
+        </footer>
+    </div>
+
+    <script>
+        // --- Configuration ---
+        // This is the URL of your backend.
+        // For local testing, it's http://127.0.0.1:5000.
+        // When you deploy your backend, change this to the public URL.
+        const API_BASE_URL = 'http://127.0.0.1:5000';
+
+        // --- DOM Elements ---
+        const chatMessages = document.getElementById('chat-messages');
+        const userInput = document.getElementById('user-input');
+        const sendButton = document.getElementById('send-button');
+        const typingIndicator = document.getElementById('typing-indicator');
+        const userIdDisplay = document.getElementById('user-id-display');
+        const statusIndicator = document.getElementById('status-indicator');
+
+        // --- State ---
+        let userId = null; // This will store the user's unique ID for the session
+
+        // --- Functions ---
+
+        /**
+         * Scrolls the chat window to the bottom to show the latest message.
+         */
+        function scrollToBottom() {
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+        }
+
+        /**
+         * Adds a message to the chat window.
+         * @param {string} message - The text of the message.
+         * @param {'user' | 'bot'} sender - Who sent the message.
+         */
+        function addMessage(message, sender) {
+            const messageElement = document.createElement('div');
+            const messageBubble = document.createElement('div');
+            
+            messageElement.classList.add('flex', 'items-end', sender === 'user' ? 'justify-end' : 'justify-start');
+            messageBubble.classList.add('px-4', 'py-2', 'rounded-xl', 'max-w-lg', 'shadow');
+            
+            if (sender === 'user') {
+                messageBubble.classList.add('bg-blue-500', 'text-white');
+            } else {
+                messageBubble.classList.add('bg-slate-200', 'text-slate-800');
+            }
+            
+            messageBubble.innerText = message;
+            messageElement.appendChild(messageBubble);
+            chatMessages.appendChild(messageElement);
+            scrollToBottom();
+        }
+
+        /**
+         * Handles sending the user's message to the backend.
+         */
+        async function handleSendMessage() {
+            const message = userInput.value.trim();
+            if (!message) return; // Don't send empty messages
+
+            // 1. Display the user's message immediately
+            addMessage(message, 'user');
+            userInput.value = ''; // Clear the input field
+            sendButton.disabled = true; // Disable send button while waiting for reply
+
+            // 2. Show the typing indicator
+            typingIndicator.classList.remove('hidden');
+            scrollToBottom();
+
+            try {
+                // 3. Send the message to the backend API
+                const response = await fetch(`${API_BASE_URL}/chat`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        user_id: userId,
+                        message: message,
+                    }),
+                });
+
+                if (!response.ok) {
+                    throw new Error(`API Error: ${response.statusText}`);
+                }
+
+                const data = await response.json();
+                
+                // 4. Display the bot's reply
+                addMessage(data.reply, 'bot');
+
+            } catch (error) {
+                console.error('Failed to send message:', error);
+                addMessage('Sorry, I seem to be having trouble connecting. Please try again later.', 'bot');
+            } finally {
+                // 5. Hide the typing indicator and re-enable the send button
+                typingIndicator.classList.add('hidden');
+                sendButton.disabled = false;
+                userInput.focus(); // Focus back on the input field
+            }
+        }
+
+        /**
+         * Initializes the chat session by getting a new user ID.
+         */
+        async function initializeChat() {
+            try {
+                // 1. Call the /create_user endpoint to get a unique ID
+                const response = await fetch(`${API_BASE_URL}/create_user`, {
+                    method: 'POST',
+                });
+
+                if (!response.ok) {
+                    throw new Error('Failed to initialize session.');
+                }
+
+                const data = await response.json();
+                userId = data.user_id; // 2. Store the user ID
+
+                // 3. Update the UI to show the user is connected
+                userIdDisplay.innerText = `User ID: ${userId}`;
+                statusIndicator.classList.remove('bg-yellow-400', 'animate-pulse');
+                statusIndicator.classList.add('bg-green-400');
+                sendButton.disabled = false; // Enable the send button
+
+                // 4. Display a welcome message
+                addMessage("Hello! I'm Aanya, your personal mental health companion. How are you feeling today?", 'bot');
+
+            } catch (error) {
+                console.error('Initialization failed:', error);
+                userIdDisplay.innerText = 'Connection Failed';
+                statusIndicator.classList.remove('bg-yellow-400', 'animate-pulse');
+                statusIndicator.classList.add('bg-red-500');
+                addMessage('I couldn\'t connect to the server. Please make sure the backend is running and try refreshing the page.', 'bot');
+            }
+        }
+
+        // --- Event Listeners ---
+        sendButton.addEventListener('click', handleSendMessage);
+        userInput.addEventListener('keydown', (event) => {
+            if (event.key === 'Enter') {
+                handleSendMessage();
+            }
+        });
+
+        // --- Start the Application ---
+        // Disable the send button until initialization is complete
+        sendButton.disabled = true;
+        // Call the initialization function when the page loads
+        document.addEventListener('DOMContentLoaded', initializeChat);
+    </script>
+</body>
+</html>
