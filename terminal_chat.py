@@ -128,7 +128,7 @@ class UserChatManager:
     def __init__(self):
         """Initialize the chat manager with LLM, crisis detector, and conversation handlers."""
         self.llm = ChatGoogleGenerativeAI(
-            model='gemini-1.5-flash',
+            model='gemini-3.8-flash',
             temperature=0.7,
             api_key=GEMINI_API_KEY
         )
